@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+</head>
+
+<body>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #336F96;
+            padding-bottom: 100px;
+            height: 500px;
+
+        }
+
+        .btn:hover {
+            background-color: #336F96;
+            color: aliceblue;
+        }
+
+        .error {
+            display: none;
+        }
+
+        .Weak {
+            display: none;
+        }
+
+        .Medium {
+            display: none;
+        }
+
+        .Strong {
+            display: none;
+        }
+
+        #confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 500px;
+            pointer-events: none;
+            overflow: visible;
+            z-index: 9999;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            opacity: 0.8;
+            animation: fall 2s linear forwards;
+        }
+
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            100% {
+                transform: translateY(500px) rotate(360deg);
+            }
+        }
+    </style>
+    <div style="margin-bottom: 50px;" class="container">
+        <h2 style="color:white">Registration Form</h2>
+        <form style="border:solid black 2px;" id="registration">
+            <div style="background-color: aliceblue; padding:10px; height: 250px;" class="groups">
+                <div style="margin-bottom: 10px;margin-top: 10px;" class="group1">
+                    <label for="name">Name</label><br>
+                    <input style="width:250px;" type="text" id="name">
+                    <div style="color:red;width: 250px;" class="error" id="errorname">
+                        name cannot be empty
+                    </div>
+                </div>
+                <div style="margin-bottom: 10px;" class="group2">
+                    <label for="name"> E-mail</label><br>
+                    <input style="width:250px" type="text" id="email">
+                    <div style="color:red;width: 250px;" class="error" id="errorname2">
+                        Enter a valid email address
+                    </div>
+                </div>
+                <div style="margin-bottom: 10px;" class="group3">
+                    <label for="name"> Password</label><br>
+                    <input style="width:250px;" type="password" id="pass">
+
+                    <div style="color:red;width: 250px;" class="error" id="errorname3">
+                        Password has minimum 6 character
+                    </div>
+                    <div class="strenth" id="strengthmessage" function=check(event)>
+                    </div>
+
+                </div>
+                <button class="btn" style="cursor:pointer;padding:10px; margin-top:5px; border-radius:30px;"
+                    type="submit" id="btn">Submit</button>
+            </div>
+            <div id="confetti"></div>
+            
+
+        </form>
+        <script>
+            var nam = document.getElementById("name");
+            var nameErr = document.getElementById("errorname");
+
+            var ema = document.getElementById("email");
+            var emailErr = document.getElementById("errorname2");
+
+            var pas = document.getElementById("pass");
+            var passErr = document.getElementById("errorname3");
+            var str = document.getElementById("strengthmessage");
+
+            var btn = document.getElementById("btn");
+
+            // Validate all fields
+            function check() {
+                let valid = true;
+
+                // Name validation
+                if (nam.value.trim() === "") {
+                    nameErr.style.display = "block";
+                    valid = false;
+                } else {
+                    nameErr.style.display = "none";
+                }
+
+                // Email validation
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(ema.value)) {
+                    emailErr.style.display = "block";
+                    valid = false;
+                } else {
+                    emailErr.style.display = "none";
+                }
+
+                // Password validation & strength
+                const passPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{6,}$/;
+                if (!passPattern.test(pas.value)) {
+                    passErr.style.display = "block";
+                    str.innerHTML = '';
+                    valid = false;
+                } else {
+                    passErr.style.display = "none";
+
+                    if (pas.value.length < 8) {
+                        str.innerHTML = '<span style="color:red;">★</span> Weak';
+                        str.style.color = "red"
+                    } else if (pas.value.length < 12) {
+                        str.innerHTML = '<span style="color:orange;">★★</span> Medium';
+                        str.style.color = "orange"
+                    } else {
+                        str.innerHTML = '<span style="color:yellowgreen;">★★★</span> Strong';
+                        str.style.color = "yellowgreen"
+                    }
+                }
+
+                btn.disabled = !valid;
+            }
+
+            // Add input listeners
+            nam.addEventListener("input", check);
+            ema.addEventListener("input", check);
+            pas.addEventListener("input", check);
+
+            // Prevent form submission
+            document.getElementById("registration").addEventListener("submit", function (e) {
+                e.preventDefault();
+                check(); // run validation
+
+                if (!btn.disabled) {
+                    alert("Form submitted successfully!");
+                    partyPop(); // 🎉 trigger confetti
+                }
+            });
+
+            function partyPop() {
+                const colors = ["red", "orange", "yellow", "green", "blue", "purple"];
+                for (let i = 0; i < 50; i++) {
+                    const confetti = document.createElement("div");
+                    confetti.classList.add("confetti-piece");
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.left = Math.random() * window.innerWidth + "px";
+                    confetti.style.animationDuration = (Math.random() * 2 + 1) + "s";
+                    document.getElementById("confetti").appendChild(confetti);
+
+                    // Remove after animation
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 2000);
+                }
+            }
+            
+
+        </script>
+
+    </div>
+</body>
+
+</html>
